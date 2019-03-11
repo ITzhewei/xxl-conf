@@ -1,0 +1,1 @@
+nohup java -jar xxl-conf-admin-1.6.2-SNAPSHOT.jar --server.port=8100

@@ -1,0 +1,1 @@
+ps -aux | grep xxl-conf-admin | awk '{print $2}'| xargs kill -9;/root/project/xxl-conf/xxl-conf-admin/run.sh
