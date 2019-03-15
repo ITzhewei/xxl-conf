@@ -1,17 +1,25 @@
 package com.xxl.conf.sample.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.sample.demo.DemoConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuxueli 2018-02-04 01:27:30
@@ -35,10 +43,13 @@ public class IndexController {
     @Resource
     private DemoConf demoConf;
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     @RequestMapping("")
     @ResponseBody
-    public List<String> index(){
+    public Map index() throws IOException {
 
+        HashMap<String, Object> map = new HashMap<>();
         List<String> list = new LinkedList<>();
 
         /**
@@ -52,9 +63,12 @@ public class IndexController {
          * 			- 支持动态推送更新；
          * 			- 支持多数据类型；
          */
-        String paramByApi = XxlConfClient.get("default.key01", null);
+        String paramByApi = XxlConfClient.get("joda.banner", null);
         list.add("1、API方式: default.key01=" + paramByApi);
-
+        logger.info("zzw:{}", paramByApi);
+        String rn = paramByApi.replace("rn", "");
+        JsonNode jsonNode = MAPPER.readTree(rn);
+        map.put("json", jsonNode);
         /**
          * 方式2: @XxlConf 注解方式
          *
@@ -68,19 +82,8 @@ public class IndexController {
          */
         list.add("2、@XxlConf 注解方式: default.key02=" + demoConf.paramByAnno);
 
-        /**
-         * 方式3: XML占位符方式
-         *
-         * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码 "<property name="paramByXml" value="$XxlConf{key}" />"；
-         * 		- 用法：占位符方式 "$XxlConf{key}"；
-         * 		- 优点：
-         * 			- 配置从配置中心自动加载；
-         * 			- 存在LocalCache，不用担心性能问题；
-         *
-         */
-        list.add("3、XML占位符方式: default.key03=" + demoConf.paramByXml);
-
-        return list;
+        map.put("list", list);
+        return map;
     }
 
 }
