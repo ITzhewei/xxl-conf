@@ -23,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 配置
@@ -192,6 +194,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		if (xxlConfNode.getValue() == null) {
 			xxlConfNode.setValue("");
 		}
+		xxlConfNode.setValue(replaceBlank(xxlConfNode.getValue()));
 
 		// add node
 		//xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
@@ -210,6 +213,16 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		sendConfMsg(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 
 		return ReturnT.SUCCESS;
+	}
+
+	public  String replaceBlank(String str) {
+		String dest = "";
+		if (str!=null) {
+			Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+			Matcher m = p.matcher(str);
+			dest = m.replaceAll("");
+		}
+		return dest;
 	}
 
 	@Override
@@ -237,6 +250,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		if (xxlConfNode.getValue() == null) {
 			xxlConfNode.setValue("");
 		}
+		xxlConfNode.setValue(replaceBlank(xxlConfNode.getValue()));
 
 		// update conf
 		//xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
