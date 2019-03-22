@@ -13,7 +13,7 @@ import com.xxl.conf.core.listener.XxlConfListenerFactory;
 public class XxlConfClient {
 
     public static String get(String key, String defaultVal) {
-        return XxlConfLocalCacheConf.get(key, defaultVal).replace("rn", "");
+        return XxlConfLocalCacheConf.get(key, defaultVal);
     }
 
     /**
